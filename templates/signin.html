@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+	<style>
+.container {
+  text-align: center;
+}
+</style>
+<!-- signin.html -->
+<div class="container" style="padding-top:10px; margin: 0 auto;">
+<h2>Sign in</h2>
+
+    <div style="text-align: center; ">
+<!-- Show only if user is logged in -->
+{% if current_user.is_authenticated %}
+    You are already logged in.
+</div>
+<!-- Show if user is NOT logged in -->
+{% else %}
+<!-- msg that was passed while rendering template -->
+{{ msg }}
+
+<form action="#" method="POST" id="signin-form">
+    <div class="form-group">
+            <label>Email Address </label>
+            <input type="text" name="email" required /><br>
+</div>
+        <div class="form-group">
+            <label>Password </label>
+            <input type="password" name="password" required/><br>
+</div>
+            <input class="btn btn-primary" type="submit" value="Submit"><br>
+
+            <span>Don't have an account?</span>
+            <a href="/signup">Sign up</a>
+</form>
+</div>
+{% endif %}
+{% endblock %}

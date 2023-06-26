@@ -1,0 +1,95 @@
+
+{% extends "base.html" %}
+{% block title %}You have logged In{% endblock %}
+
+{% block content %}
+{% with messages = get_flashed_messages()  %}
+  {% if messages %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      {% for user in messages %}
+      <li class="breadcrumb-item active" aria-current="page">{{ user }}</li>
+      {% endfor %}
+    </ol>
+  </nav>
+  {% endif %}
+  {% endwith %}
+    <div class="blog-title">
+        {% if user %}
+        <h1 style="text-align:left;">Dashboard: Welcome <b>{{ user }}</b></h1>
+        {% endif %}
+    </div>
+
+  <form action= "{{url_for('history')}}" method="post">
+    <div class="form-group" style="overflow-wrap:break-word;">
+
+      
+    </div>
+
+  
+  </form>
+<div class="container" style="padding-top:10px; margin: 0 auto;">
+    <form method="POST">
+
+        <select name="myclass" id="myclass-select">
+            <option value="">--Please choose an option--</option>
+            <option value="Person">Person</option>
+            <option value="Assailt rifle">Assault Rifle</option>
+            <option value="Submachine gun">Submachine gun</option>
+            <option value="Pistol">Pistol</option>
+            <option value=""></option>
+            <option value=""></option>
+        </select>
+        <input name="probability">
+    <input type="submit">
+</form>
+  {% for item in predictions.items %}
+    <div class="card" style="margin-top:15px;">
+      <div class="card-body">
+          {% if item.url.rsplit('.', 1)[1].lower() == "mp4" %}
+          <video id ="vid" controls="controls" defaultMuted autoplay playsinline >
+              <source src="{{ url_for('display_video', filename=item.url) }}" ></source>
+          </video>
+           <a href="{{ url_for('display_video', filename=item.url) }}">download video</a>
+          {% else %}
+          <img id="my-image" src="{{ url_for('display_image', filename=item.url) }}" style="height: auto; width:320px"/>
+        {% endif %}
+        <h5 class="card-title">{{ item.url }}</h5>
+        <h6 class="card-subtitle mb-2 text-muted">{{ item.date }}</h6>
+        <p class="card-text">{{ item.active }}</p>
+        <form  action="{{url_for('delete_post', id=item.id)}}" method="post" style="float:right; margin-left:10px;">
+          <input type = "hidden" name="method" value="DELETE">
+          <input type="submit" value="Delete" class="btn btn-danger">
+        </form>
+      </div>
+    </div> 
+  {% endfor %}
+   {% for page_num in predictions.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+    
+      {% if page_num %}
+          {% if predictions.page == page_num %}
+            <a class="btn btn-info mb-4" href="{{url_for('history', page=page_num)}}">{{ page_num }}</a>
+          {% else %}
+            <a class="btn btn-outline-info mb-4" href="{{url_for('history', page=page_num)}}">{{ page_num }}</a>
+          {% endif %}
+          {% else %}
+          ...
+        {% endif %}
+  {% endfor %}
+{% endblock %}
+</div>
+
+{% block javascript %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+function loadVid(filename){
+     var video = document.getElementById('vid');
+     var file = {{url_for('display_video', filename=filename)}};
+     console.log({{url_for('display_video', filename=filename)}})
+     var url = URL.createObjectURL(file);
+     print(url)
+     video.innerHTML = '<source src="' + url + '" type="video/mp4">';
+}
+</script>
+{% endblock %}
